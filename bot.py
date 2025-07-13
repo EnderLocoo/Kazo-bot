@@ -2,6 +2,11 @@ import discord
 from discord.ext import commands
 from discord import app_commands
 import asyncio
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+load_dotenv(".env.imagenes")
 
 class KazoBot(commands.Bot):
     def __init__(self, command_prefix, intents, auto_role_id, servidores_permitidos):
@@ -38,7 +43,17 @@ class KazoBot(commands.Bot):
             await asyncio.sleep(1 * 60 * 60)
             if role in member.roles:
                 await member.remove_roles(role)
-                print(f"⏳ 4 horas pasaron. Rol removido de {member.name}")
+                print(f"⏳ 1 hora pasó. Rol removido de {member.name}")
+                try:
+                    await member.send(
+                        f"¡Buenas {member.name}! Te informo de que se te ha retirado el rol temporal asignado al unirte al servidor. Ya puedes interactuar con el servidor sin restricciones.\n\n"
+                        "Si tienes dudas, contacta a un moderador."
+                        "\n\nPD: Este es un mensaje automático, no respondas a este mensaje."
+                        "\n-# La familia de Kazo"
+                    )
+                    print(f"📩 Mensaje privado enviado a {member.name}")
+                except Exception as dm_error:
+                    print(f"⚠️ No se pudo enviar mensaje privado a {member.name}: {dm_error}")
 
         except discord.Forbidden:
             print("🚫 No tengo permisos para gestionar roles.")
@@ -47,36 +62,30 @@ class KazoBot(commands.Bot):
 
 # Slash commands
 def setup_slash_commands(bot: KazoBot):
-    @bot.tree.command(name="ayuda", description="Muestra el mensaje de ayuda")
-    async def ayuda(interaction: discord.Interaction):
-        usuario = interaction.user.name
-        help_text = (
-            f"Hola {usuario}! Soy Kazo-Bot. Aquí tienes algunos comandos que puedes usar:\n"
-            "- `/ayuda`: Muestra este mensaje de ayuda.\n"
-            "- `/info`: Información sobre el bot.\n"
-            "- `/redes`: Enlaces a las redes sociales de Kazo.\n"
-            "¡Disfruta del servidor!"
-        )
-        await interaction.response.send_message(help_text)
-
-    @bot.tree.command(name="info", description="Información sobre el bot")
+    @bot.tree.command(name="info", description="Muestra información sobre el bot")
     async def info(interaction: discord.Interaction):
         embed = discord.Embed(
-            title="Información del Bot",
-            description="Un bot para gestionar a los nuevos miembros del servidor, asignando un rol temporalmente.",
+            title="📘 | Información del Bot",
+            description="Un bot destinado a ayudar a la comunidad de Kazo Sensei. Se irán añadiendo más funcionalidades con el tiempo.",
             color=discord.Color.purple()
         )
         embed.add_field(name="Nombre", value="Kazo-Bot", inline=True)
-        embed.add_field(name="Versión", value="1.0", inline=True)
+        embed.add_field(name="Versión", value=f"{os.getenv('VERSION')}", inline=True)
         embed.add_field(name="Desarrollador", value="Darking", inline=True)
-        embed.add_field(name="Comandos disponibles", value="`/ayuda`, `/info`, `/redes`", inline=False)
+        embed.add_field(name="Comandos disponibles", value="`/info`, `/redes`", inline=False)
+
+        embed.set_thumbnail(url="https://cdn.discordapp.com/attachments/1393783348689899520/1393798789159981056/Vnic1PePmZ5Z0Jeke1oelTp1JuKvjD8y8FA3GcDeQAAAAAElFTkSuQmCC.png?ex=68747bc6&is=68732a46&hm=58f9b5b3c7ea7aa0b225c5c7009b45e770ff8209f0b0149c1dd073c1b1810585&") # URL de la imagen del thumbnail
+
+        embed.set_footer(
+            text="La familia de Kazo",
+            icon_url="https://cdn.discordapp.com/attachments/1393783348689899520/1393783475261411368/kazo_icon.png?ex=68746d83&is=68731c03&hm=ad8428d9d72a44c973961621acd6f603e7e719ac10b99b57d73254d40fb7d2ce&") # Texto e icono del pie de página
+        
         await interaction.response.send_message(embed=embed)
 
-    @bot.tree.command(name="redes", description="Redes sociales de Kazo Sensei")
+    @bot.tree.command(name="redes", description="Muestra las redes sociales de Kazo Sensei")
     async def redes(interaction: discord.Interaction):
         embed = discord.Embed(
-            title="Redes Sociales de Kazo Sensei",
-            description="Un link directo a las redes de Kazo Sensei.",
+            title="👥 | Redes Sociales de Kazo Sensei",
             color=discord.Color.purple()
         )
         embed.add_field(name="<:twitch_icon:1393663624072925224> Twitch", value="[KazoSensei_](https://www.twitch.tv/kazosensei_)", inline=True) # Twitch
@@ -85,5 +94,11 @@ def setup_slash_commands(bot: KazoBot):
         embed.add_field(name="<:instagram_icon:1393743761976332318> Instagram", value="[kazosensei_](https://www.instagram.com/kazosensei_/)\n[futurogameroficial](https://www.instagram.com/futurogameroficial/)", inline=True) # Instagram
         embed.add_field(name="<:threads_icon:1393744739681046681> Threads", value="[Kazo](https://www.threads.com/@kazosensei_)", inline=True) # Threads
         embed.add_field(name="<:twitter_icon:1393746897881006100> Twitter (X)", value="[Kazo Sensei](https://x.com/KazoSensei_)", inline=True)
+
+        embed.set_thumbnail(url=f"{os.getenv('IMAGEN_REDES')}") # Imagen del thumbnail
+        
+        embed.set_footer(
+            text="La familia de Kazo",
+            icon_url=f"{os.getenv('IMAGEN_KAZO')}") # Texto e icono del pie de página
 
         await interaction.response.send_message(embed=embed)

@@ -6,8 +6,8 @@ from bot import KazoBot, setup_slash_commands
 load_dotenv()
 
 TOKEN_BOT = os.getenv("TOKEN")
-AUTO_ROLE_ID = 1392547680030560309
-servidores_permitidos = [975245393090723903, 823835602138169374]
+AUTO_ROLE_ID = int(os.getenv("AUTO_ROLE_ID"))
+servidores_permitidos = [int(sid) for sid in os.getenv("SERVIDORES_PERMITIDOS").split(",")]
 
 intents = discord.Intents.default()
 intents.members = True
