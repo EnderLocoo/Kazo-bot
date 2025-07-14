@@ -45,6 +45,20 @@ class KazoBot(commands.Bot):
                 await member.remove_roles(role)
                 print(f"⏳ 1 hora pasó. Rol removido de {member.name}")
                 try:
+                    embed = discord.Embed(
+                        title="Acceso limitado removido",
+                        description=f"Buenas {member.name}! Te informo de que se te ha retirado el rol temporal asignado al unirte al servidor. Ya puedes interactuar con el servidor sin restricciones.\nSi tienes dudas, contacta a un moderador.\n\n-# PD: Este es un mensaje automático, no respondas a este mensaje.",
+                        color=discord.Color.purple()
+
+                    )
+
+                    embed.set_thumbnail(url=f"{os.getenv('IMAGEN_KAZO')}")  # URL de la imagen del thumbnail
+
+                    embed.set_footer(
+                        text="La familia de Kazo",
+                        icon_url=f"{os.getenv('IMAGEN_KAZO')}"  # Texto e icono del pie de página
+                    )
+
                     await member.send(
                         f"¡Buenas {member.name}! Te informo de que se te ha retirado el rol temporal asignado al unirte al servidor. Ya puedes interactuar con el servidor sin restricciones.\n\n"
                         "Si tienes dudas, contacta a un moderador."
@@ -74,11 +88,11 @@ def setup_slash_commands(bot: KazoBot):
         embed.add_field(name="Desarrollador", value="Darking", inline=True)
         embed.add_field(name="Comandos disponibles", value="`/info`, `/redes`", inline=False)
 
-        embed.set_thumbnail(url="https://cdn.discordapp.com/attachments/1393783348689899520/1393798789159981056/Vnic1PePmZ5Z0Jeke1oelTp1JuKvjD8y8FA3GcDeQAAAAAElFTkSuQmCC.png?ex=68747bc6&is=68732a46&hm=58f9b5b3c7ea7aa0b225c5c7009b45e770ff8209f0b0149c1dd073c1b1810585&") # URL de la imagen del thumbnail
+        embed.set_thumbnail(url=f"{os.getenv('IMAGEN_REDES')}") # URL de la imagen del thumbnail
 
         embed.set_footer(
             text="La familia de Kazo",
-            icon_url="https://cdn.discordapp.com/attachments/1393783348689899520/1393783475261411368/kazo_icon.png?ex=68746d83&is=68731c03&hm=ad8428d9d72a44c973961621acd6f603e7e719ac10b99b57d73254d40fb7d2ce&") # Texto e icono del pie de página
+            icon_url=f"{os.getenv('IMAGEN_KAZO')}") # Texto e icono del pie de página
         
         await interaction.response.send_message(embed=embed)
 
